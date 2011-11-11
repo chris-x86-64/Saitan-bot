@@ -6,7 +6,7 @@ use Encode;
 use utf8;
 use AnyEvent::Twitter::Stream;    # Handles Userstream API
 require 'lib/functions.pl';       # Package name is "BotFunctions"
-require 'lib/textdata.pl';         # Puts analyzed tweets into MySQL
+require 'lib/textdata.pl';        # Puts analyzed tweets into MySQL
 binmode STDOUT, ":utf8";          # All output will be UTF-8
 
 # Initiate Userstream
@@ -17,11 +17,12 @@ my $stream = AnyEvent::Twitter::Stream->new(
         ANYEVENT_TWITTER_STREAM_SSL => 1,
         method                      => "userstream",
         on_connect                  => sub {
-#        		&BotFunctions::wakeup;
+
+                #&BotFunctions::wakeup;
         },
-        on_tweet                    => sub {
+        on_tweet => sub {
                 my $tweet = shift;
-                my $text = decode_utf8($tweet->{text});
+                my $text  = decode_utf8( $tweet->{text} );
                 &BotFunctions::react($tweet);
                 &TextData::add_data($text);
         },

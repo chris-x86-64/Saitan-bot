@@ -17,6 +17,7 @@ categories:
   - 'saichan'
   - 'tasty'
   - 'yuck'
+  - 'couple'
 
 replyonly:
   - 'mjkt'
@@ -25,6 +26,10 @@ replyonly:
   - 'prpr'
   - 'momi'
   - 'oppai'
+
+souiu:
+  patterns:
+    - 'ああ(.+?)ってそういう'
 
 fav:
   keywords:
@@ -114,6 +119,7 @@ prpr:
     - 'ぶっとばす'
     - 'しないでよぉ///'
     - 'やめてよぅ…'
+
 momi:
   keywords:
     - '(も|揉)(む|ませろ)'
@@ -124,6 +130,7 @@ momi:
     - 'これで我慢して っうさぎ'
     - 'これで我慢して っ布団'
     - 'これで我慢して っクッション'
+
 oppai:
   keywords:
     - 'おっぱい'
@@ -131,4 +138,16 @@ oppai:
     - 'もふもふ'
     - '私におっぱいなど無かった'
     - '触れるもんなら触ってみな'
+
+couple:
+  keywords:
+    - 'はこさつ'
+    - 'hakosatsu'
+    - 'さいりつ'
+    - 'でろがしわ'
+    - 'つるでろ'
+    - 'あげせん'
+    - 'ひたあん'
+  replies:
+    - '(*´ω`*)'
 ...
