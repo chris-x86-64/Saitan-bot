@@ -1,0 +1,134 @@
+---
+
+oauth:
+  access_token: ''
+  access_token_secret: ''
+  consumer_key: ''
+  consumer_secret: ''
+
+sql:
+  dbname: ''
+  username: ''
+  password: ''
+
+categories:
+  - 'fav'
+  - 'saitan'
+  - 'saichan'
+  - 'tasty'
+  - 'yuck'
+
+replyonly:
+  - 'mjkt'
+  - 'hentai'
+  - 'love'
+  - 'prpr'
+  - 'momi'
+  - 'oppai'
+
+fav:
+  keywords:
+    - 'ふぁぼ'
+    - 'fav'
+
+mjkt:
+  keywords:
+    - 'mjkt'
+    - 'ｍｊｋｔ'
+    - 'マジキチ'
+  replies:
+    - 'マジキチちがう'
+    - 'ｍｊｋｔじゃないもん！'
+    - 'ｍｊｋｔじゃねえよ'
+
+hentai:
+  keywords:
+    - '変態'
+    - 'ヘンタイ'
+  replies:
+    - '誰が変態だ'
+    - 'ちがう'
+    - '私は変態じゃない'
+    - '変態じゃないし'
+    - '私はぴゅあぴゅあよ★'
+
+saitan:
+  keywords:
+    - 'さいたん'
+  replies:
+    - 'さいたんじゃないもん！'
+    - 'さいたんじゃないってば！'
+    - 'さいたんじゃないし！'
+    - 'さいたんじゃねえ！'
+    - 'さいたんじゃないもんっ'
+    - 'さいたんちがう！'
+
+love:
+  keywords:
+    - '(あい|愛)してる'
+    - '(かわい|可愛)い'
+  replies:
+    - 'ありがとう(*´ω`*)'
+    - 'えへへ///'
+    - 'んもぅ〜'
+
+saichan:
+  keywords:
+    - 'さいちゃん'
+    - 'さいかく'
+  replies:
+    - 'なぁにー？'
+    - 'よんだぁー？'
+    - 'はぁーい！'
+
+tasty:
+  keywords:
+    - 'ドクペ'
+    - 'ドクターペッパー'
+    - 'アイス'
+  replies:
+    - 'おいしいよね！'
+    - 'だいすき！'
+    - 'うまいっ！'
+    - '買ってこい'
+
+yuck:
+  keywords:
+    - 'スパム'
+    - '貝'
+    - 'コーヒー'
+  replies:
+    - 'うえぇええぇええぇ'
+    - 'ゲロマズ(´･ω･`)'
+    - 'やめて＞＜'
+    - 'まずいいいっぃいぃ'
+
+prpr:
+  keywords:
+    - 'prpr'
+    - 'ｐｒｐｒ'
+    - 'ぺろぺろ'
+  replies:
+    - 'すんな！'
+    - ' '
+    - 'ぶっとばす'
+    - 'しないでよぉ///'
+    - 'やめてよぅ…'
+momi:
+  keywords:
+    - '(も|揉)(む|ませろ)'
+  replies:
+    - 'ふざけんな'
+    - '無いよ？'
+    - 'これで我慢して っ猫'
+    - 'これで我慢して っうさぎ'
+    - 'これで我慢して っ布団'
+    - 'これで我慢して っクッション'
+oppai:
+  keywords:
+    - 'おっぱい'
+  replies:
+    - 'もふもふ'
+    - '私におっぱいなど無かった'
+    - '触れるもんなら触ってみな'
+...
