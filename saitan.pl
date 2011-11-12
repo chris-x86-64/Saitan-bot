@@ -9,8 +9,9 @@ require 'lib/functions.pl';       # Package name is "BotFunctions"
 require 'lib/textdata.pl';        # Puts analyzed tweets into MySQL
 binmode STDOUT, ":utf8";          # All output will be UTF-8
 
+# my $connected = 0;
 # Initiate Userstream
-my $done = AnyEvent->condvar;     # Handles event condition
+my $done = AE::cv;                # Handles event condition
 
 my $stream = AnyEvent::Twitter::Stream->new(
         &BotFunctions::oauth_keys_stream,
@@ -18,7 +19,7 @@ my $stream = AnyEvent::Twitter::Stream->new(
         method                      => "userstream",
         on_connect                  => sub {
 
-                #&BotFunctions::wakeup;
+                &BotFunctions::wakeup;
         },
         on_tweet => sub {
                 my $tweet = shift;
@@ -39,5 +40,7 @@ my $stream = AnyEvent::Twitter::Stream->new(
                 $done->send;
         },
 );
+
+&BotFunctions::talk_randomly;
 
 $done->recv;

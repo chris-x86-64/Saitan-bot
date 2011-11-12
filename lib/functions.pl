@@ -202,6 +202,23 @@ sub talk {
         }
 }
 
+sub talk_randomly {
+        my $wait = shift;
+        $wait = rand( $conf->{interval} ) unless defined $wait;
+        my $cv = AE::cv;
+        my $timed;
+        $timed = AE::timer(
+                $wait, 0,
+                sub {
+                        &BotFunctions::talk( &TextData::markov, undef );
+                        undef $timed;
+                        $cv->send;
+                },
+        );
+        $cv->recv;
+        &talk_randomly( rand( $conf->{interval} ) );
+}
+
 sub limit {
         my $hashtag = ' #' . int( rand(256) );
         my $cv      = AE::cv;
