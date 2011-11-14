@@ -19,10 +19,12 @@ sub new {
 sub _init_db {
 	my $self = shift;
 
+	my $conf = $self->{conf};
+
 	$self->{dbh} = DBI->connect(
-		"dbi:mysql:$self->conf->{sql}->{dbname}",
-		$self->conf->{sql}->{username},
-		$self->conf->{sql}->{password},
+		"dbi:mysql:$conf->{sql}->{dbname}",
+		$conf->{sql}->{username},
+		$conf->{sql}->{password},
 	);
 
 	$self->{dbh}->{'mysql_enable_utf8'} = 1;
@@ -53,12 +55,12 @@ sub add_data {
 sub markov {
 	my $self = shift;
 
-	use MeCab;
+	use Text::MeCab;
 	use Algorithm::MarkovChain;
 
 	my $text = join(
 		"",
-		@{ $dbh->selectcol_arrayref(
+		@{ $self->{dbh}->selectcol_arrayref(
 			'SELECT text FROM texts WHERE id >= (SELECT MAX(id) FROM texts) - 100'
 		) }
 	);
@@ -97,6 +99,8 @@ sub markov {
 }
 
 sub DESTROY {
+	my $self = shift;
+
 	$self->{dbh}->disconnect;
 }
 

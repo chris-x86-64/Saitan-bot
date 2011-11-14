@@ -5,7 +5,8 @@ use warnings;
 use Encode;
 use utf8;
 use AnyEvent::Twitter::Stream;    # Handles Userstream API
-require 'lib/SaitanBot.pm';       # Package name is "BotFunctions"
+use lib './lib';
+require 'SaitanBot.pm';       # Package name is "BotFunctions"
 # require 'lib/textdata.pl';        # Puts analyzed tweets into MySQL
 binmode STDOUT, ":utf8";          # All output will be UTF-8
 
