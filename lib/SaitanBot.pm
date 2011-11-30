@@ -30,9 +30,6 @@ sub new {
 			traits              => [qw/API::REST OAuth WrapError/],
 		),
 
-		#date
-		data => SaitanBot::Data->new(),
-
 		# Boolean - Whether hitted the daily update limit or not
 		limit    => 0,
 		favlimit => 0,
@@ -118,7 +115,7 @@ sub react {
 sub add_data {
 	my ($self, $text) = @_;
 
-	$self->{data}->add_data($text);
+	&SaitanBot::Data::add_data($text);
 }
 
 sub _prepare_reply {
@@ -130,7 +127,7 @@ sub _prepare_reply {
 		return;
 	}
 	elsif ( $category eq 'unknown' and $is_mentioned == 1 ) {
-		$status .= $self->{data}->markov;
+		$status .= &SaitanBot::Data::markov;
 	}
 	else {
 		my $replies = $self->{conf}->{$category}->{replies};
@@ -248,7 +245,7 @@ sub talk_randomly {
 	$timed = AE::timer(
 		$wait, 0,
 		sub {
-			$self->_talk( $self->{data}->markov, undef );
+			$self->_talk( &SaitanBot::Data->markov, undef );
 			undef $timed;
 			$cv->send;
 		},

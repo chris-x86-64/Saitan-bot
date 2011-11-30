@@ -1,47 +1,37 @@
 package SaitanBot::Data;
 
 use strict;
+use warnings;
 use Encode;
 use YAML::Syck;
 use DBI;
 use utf8;
+use Data::Dumper;
 
-sub new {
-	my $class = shift;
 
-	my $self = bless {
-		conf => YAML::Syck::LoadFile('config.yml'),
-	}, $class;
+my $conf = YAML::Syck::LoadFile('config.yml');
 
-	$self->_init_db;
-}
+my $dbh = DBI->connect(
+	"dbi:mysql:$conf->{sql}->{dbname}",
+	$conf->{sql}->{username},
+	$conf->{sql}->{password},
+);
 
-sub _init_db {
-	my $self = shift;
-
-	my $conf = $self->{conf};
-
-	$self->{dbh} = DBI->connect(
-		"dbi:mysql:$conf->{sql}->{dbname}",
-		$conf->{sql}->{username},
-		$conf->{sql}->{password},
-	);
-
-	$self->{dbh}->{'mysql_enable_utf8'} = 1;
-	$self->{dbh}->do('SET NAMES utf8');
-}
+$dbh->{'mysql_enable_utf8'} = 1;
+$dbh->do('SET NAMES utf8');
 
 sub add_data {
-	my ($self, $text) = @_;
+	my ($text) = @_;
 
 	return unless ($text);
 
-	$self->{dbh}->do( "INSERT INTO texts(text) VALUES(?)", undef, $text );
+	$dbh->do( "INSERT INTO texts(text) VALUES(?)", undef, $text );
 
 	my @result = 
-		map { $self->{dbh}->do("INSERT INTO souiu(word) VALUES(?)", undef, $_) }
+		map { $dbh->do("INSERT INTO souiu(word) VALUES(?)", undef, $_) }
 		grep { $_ } 
-		map { $text =~ decode_utf($_) ? $1 : undef } @{ $self->{conf}->{souiu}->{patterns} };
+		map { $text =~ /$_/ ? $1 : undef } 
+		map { decode_utf8($_) } @{ $conf->{souiu}->{patterns} };
 
 	# foreach my $pattern ( @{ $conf->{souiu}->{patterns} } ) {
 	# 	if ( $text =~ decode_utf8($pattern) ) {
@@ -60,25 +50,25 @@ sub markov {
 
 	my $text = join(
 		"",
-		@{ $self->{dbh}->selectcol_arrayref(
-			'SELECT text FROM texts WHERE id >= (SELECT MAX(id) FROM texts) - 100'
+		@{ $dbh->selectcol_arrayref(
+			'SELECT text FROM texts ORDER BY id DESC LIMIT 100'
 		) }
 	);
 	$text = decode_utf8($text);
 
-	$self->{dbh}->disconnect;
+	$dbh->disconnect;
 
-	my $mecab  = MeCab::Tagger->new;
+	my $mecab  = Text::MeCab->new;
 	my $chunks = [];
 
 	for (
-		my $node = $mecab->parseToNode($text) ;
+		my $node = $mecab->parse($text) ;
 		$node ;
-		$node = $node->{next}
+		$node = $node->next
 	)
 	{
-		next unless defined $node->{surface};
-		push @$chunks, $node->{surface};
+		next unless $node->surface;
+		push @$chunks, $node->surface;
 	}
 
 	my $chain = Algorithm::MarkovChain->new;
@@ -101,7 +91,7 @@ sub markov {
 sub DESTROY {
 	my $self = shift;
 
-	$self->{dbh}->disconnect;
+	$dbh->disconnect;
 }
 
 1;
