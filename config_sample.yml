@@ -11,18 +11,18 @@ sql:
   username: ''
   password: ''
 
-interval: 1200
+interval: 3600
 
 categories:
   - 'fav'
   - 'saitan'
-  - 'saichan'
   - 'tasty'
   - 'yuck'
   - 'couple'
 
 replyonly:
   - 'mjkt'
+  - 'saichan'
   - 'hentai'
   - 'love'
   - 'prpr'
@@ -115,6 +115,7 @@ prpr:
     - 'prpr'
     - 'ｐｒｐｒ'
     - 'ぺろぺろ'
+    - 'ちゅっちゅ'
     - 'せっくす'
     - 'セックス'
   replies:
@@ -148,14 +149,16 @@ couple:
     - 'はこさつ'
     - 'hakosatsu'
     - 'さいりつ'
-    - 'でろがしわ'
-    - 'つるでろ'
-    - 'あげせん'
+    - 'とねぴて'
+#    - 'でろがしわ'
+#    - 'つるでろ'
+#    - 'あげせん'
     - 'ひたあん'
     - 'まりせく'
   replies:
     - '(*´ω`*)'
-    - '結婚はよ'
+#    - '結婚はよ'
     - 'によによ'
     - 'にやにや'
 ...
+
