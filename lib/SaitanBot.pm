@@ -115,7 +115,7 @@ sub react {
 sub add_data {
 	my ($self, $text) = @_;
 
-	SaitanBot::Data->add_data($text);
+	&SaitanBot::Data::add_data($text);
 }
 
 sub _prepare_reply {

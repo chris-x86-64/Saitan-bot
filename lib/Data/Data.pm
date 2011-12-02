@@ -29,22 +29,22 @@ sub add_data {
 	return unless ($text);
 
 	my $dbh = connectSQL();
-	$dbh->do( "INSERT INTO texts(text) VALUES(?)", undef, $text );
+	$dbh->do( "INSERT INTO texts(text) VALUES(?)", undef, $text ) or die DBI->errstr;
 
-	my @result = 
-		map { $dbh->do("INSERT INTO souiu(word) VALUES(?)", undef, $_) }
-		grep { $_ } 
-		map { $text =~ /$_/ ? $1 : undef } 
-		map { decode_utf8($_) } @{ $conf->{souiu}->{patterns} };
+	foreach my $pattern ( @{ $conf->{souiu}->{patterns} } ) {
+		if ( $text =~ decode_utf8($pattern) ) {
+			$dbh->do( "INSERT INTO souiu(word) VALUES(?)",
+				undef, $1 );
+		}
+	}
+
+#	my @result = 
+#		map { $dbh->do("INSERT INTO souiu(word) VALUES(?)", undef, $_) }
+#		grep { $_ } 
+#		map { $text =~ /$_/ ? $1 : undef } 
+#		map { decode_utf8($_) } @{ $conf->{souiu}->{patterns} };
 	disconnectSQL($dbh);
 
-	# foreach my $pattern ( @{ $conf->{souiu}->{patterns} } ) {
-	# 	if ( $text =~ decode_utf8($pattern) ) {
-	# 		my $match = $1;
-	# 		$dbh->do( "INSERT INTO souiu(word) VALUES(?)",
-	# 			undef, $match );
-	# 	}
-	# }
 }
 
 sub markov {
