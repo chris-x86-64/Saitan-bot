@@ -115,7 +115,7 @@ sub react {
 sub add_data {
 	my ($self, $text) = @_;
 
-	&SaitanBot::Data::add_data($text);
+	SaitanBot::Data->add_data($text);
 }
 
 sub _prepare_reply {
@@ -127,7 +127,7 @@ sub _prepare_reply {
 		return;
 	}
 	elsif ( $category eq 'unknown' and $is_mentioned == 1 ) {
-		$status .= &SaitanBot::Data::markov;
+		$status .= SaitanBot::Data->markov;
 	}
 	else {
 		my $replies = $self->{conf}->{$category}->{replies};
@@ -245,7 +245,7 @@ sub talk_randomly {
 	$timed = AE::timer(
 		$wait, 0,
 		sub {
-			$self->_talk( &SaitanBot::Data->markov, undef );
+			$self->_talk( SaitanBot::Data->markov, undef );
 			undef $timed;
 			$cv->send;
 		},

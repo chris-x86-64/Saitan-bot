@@ -28,7 +28,7 @@ sub add_data {
 
 	return unless ($text);
 
-	my $dbh = &connectSQL;
+	my $dbh = connectSQL();
 	$dbh->do( "INSERT INTO texts(text) VALUES(?)", undef, $text );
 
 	my @result = 
@@ -36,7 +36,7 @@ sub add_data {
 		grep { $_ } 
 		map { $text =~ /$_/ ? $1 : undef } 
 		map { decode_utf8($_) } @{ $conf->{souiu}->{patterns} };
-	&disconnectSQL($dbh);
+	disconnectSQL($dbh);
 
 	# foreach my $pattern ( @{ $conf->{souiu}->{patterns} } ) {
 	# 	if ( $text =~ decode_utf8($pattern) ) {
@@ -51,7 +51,7 @@ sub markov {
 	use MeCab;
 	use Algorithm::MarkovChain;
 
-	my $dbh = &connectSQL;
+	my $dbh = connectSQL();
 	my $text = join(
 			"",
 			@{
@@ -60,7 +60,7 @@ sub markov {
 					)
 			  }
 	);
-	&disconnectSQL($dbh);
+	disconnectSQL($dbh);
 
 	$text = decode_utf8($text);
 	$text =~ s/(\@|\/|\:|[A-Za-z_]|\#|)//g;
