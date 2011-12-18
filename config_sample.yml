@@ -1,15 +1,15 @@
 ---
 
 oauth:
-  access_token: ''
-  access_token_secret: ''
-  consumer_key: ''
-  consumer_secret: ''
+  access_token: ' '
+  access_token_secret: ' '
+  consumer_key: ' '
+  consumer_secret: ' '
 
 sql:
-  dbname: ''
-  username: ''
-  password: ''
+  dbname: ' '
+  username: ' '
+  password: ' '
 
 interval: 3600
 
@@ -106,9 +106,9 @@ yuck:
     - 'コーヒー'
   replies:
     - 'うえぇええぇええぇ'
-    - 'ゲロマズ(´･ω･`)'
+    - '苦手なの(´･ω･`)'
     - 'やめて＞＜'
-    - 'まずいいいっぃいぃ'
+    - 'にがいよぅ……＞＜'
 
 prpr:
   keywords:
