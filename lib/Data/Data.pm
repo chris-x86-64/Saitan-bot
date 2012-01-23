@@ -53,17 +53,17 @@ sub markov {
 
 	my $dbh = connectSQL();
 	my $text = join(
-			"",
+			"。",
 			@{
 					$dbh->selectcol_arrayref(
-'SELECT text FROM texts WHERE id >= (SELECT MAX(id) FROM texts) - 100'
+'SELECT text FROM texts WHERE id >= (SELECT MAX(id) FROM texts) - 20'
 					)
 			  }
 	);
 	disconnectSQL($dbh);
 
 	$text = decode_utf8($text);
-	$text =~ s/(\@|\/|\:|[A-Za-z_]|\#|)//g;
+	$text =~ s/(\@|\/|\:|[0-9A-Za-z_]|\#|)//g;
 
 	my $mecab  = MeCab::Tagger->new;
 	my $chunks = [];
@@ -77,14 +77,18 @@ sub markov {
 			next unless defined $node->{surface};
 			push @$chunks, $node->{surface};
 	}
+	warn join(",", @$chunks),"\n";
 
 	my $chain = Algorithm::MarkovChain->new;
 	$chain->seed(
 		symbols => $chunks,
-		longest => 4,
+		longest => 8,
 	);
 
-	my @scrambled = $chain->spew( length => int(rand(20)), );
+	my @scrambled = $chain->spew( 
+			length => int(rand(8)),
+			strict_start => 1,
+	);
 
 	my $scrambled = '';
 	foreach my $chunk (@scrambled) {

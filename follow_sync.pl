@@ -6,7 +6,7 @@ use Net::Twitter::Lite;
 use YAML::Syck;
 use Data::Dumper;
 
-my $conf = YAML::Syck::LoadFile('config.yml');    # Loads OAuth keys from YAML
+my $conf = YAML::Syck::LoadFile('../twitter/config/config.yml');    # Loads OAuth keys from YAML
 
 # Initiate Twitter-API methods
 my $actions = new Net::Twitter::Lite(
