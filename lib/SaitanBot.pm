@@ -113,8 +113,10 @@ sub react {
 }
 
 sub add_data {
-	my ($self, $text) = @_;
+	my ($self, $tweet) = @_;
 
+	return unless (defined($tweet->{id}) or $tweet->{user}{id} != $self->{whoami});
+	my $text = decode_utf8($tweet->{text});
 	&SaitanBot::Data::add_data($text);
 }
 
