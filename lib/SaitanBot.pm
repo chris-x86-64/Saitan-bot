@@ -178,30 +178,40 @@ sub _is_mentioned {
 	return 0;
 }
 
-sub _fav {
-	my ($self, $fav_id) = @_;
+sub fav {
+	my ($self, $tweet) = @_;
 
-	eval { $self->{actions}->create_favorite($fav_id); };
-	if ($@) {
-		if ( $@ =~ /favorite per day/ ) {
-			$self->_talk(
-				decode_utf8("ふぁぼ規制ﾅｰｰｰｰｰｰｰｰｰｰｰｰｰｰ"),
-				undef
-			);
-			$self->{favlimit} = 1;
-			warn "$@\n";
+	my $text = $tweet->{text};
+	my $fav_id = $tweet->{id};
+
+	my $conf = $self->{conf};
+
+	foreach my $keyword ( @{ $conf->{fav}->{keywords} } ) {
+		if ( $text =~ decode_utf8($keyword) ) {
+			eval { $self->{actions}->create_favorite($fav_id); };
+			if ($@) {
+				if ( $@ =~ /favorite per day/ ) {
+					$self->_talk(
+						decode_utf8("ふぁぼ規制ﾅｰｰｰｰｰｰｰｰｰｰｰｰｰｰ"),
+						undef
+					);
+					$self->{favlimit} = 1;
+					warn "$@\n";
+				}
+				else {
+					$self->_talk(
+						decode_utf8("ふぁぼ失敗なう＞＜ 当該ID: $fav_id"),
+						undef
+					);
+					warn "$@\n";
+				}
+			}
+			else {
+				$self->{favlimit} = 0;
+				print "Favorited: $fav_id\n";
+				last;
+			}
 		}
-		else {
-			$self->_talk(
-				decode_utf8("ふぁぼ失敗なう＞＜ 当該ID: $fav_id"),
-				undef
-			);
-			warn "$@\n";
-		}
-	}
-	else {
-		$self->{favlimit} = 0;
-		print "Favorited: $fav_id\n";
 	}
 	return;
 }

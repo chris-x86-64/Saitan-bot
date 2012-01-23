@@ -27,6 +27,7 @@ my $stream = AnyEvent::Twitter::Stream->new(
                 my $tweet = shift;
                 my $text  = decode_utf8( $tweet->{text} );
                 $saitan->react($tweet);
+                $saitan->fav($tweet);
                 $saitan->add_data($text);
         },
         on_event => sub {
