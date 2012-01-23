@@ -181,6 +181,7 @@ sub _is_mentioned {
 sub fav {
 	my ($self, $tweet) = @_;
 
+	return unless ($tweet->{id});
 	my $text = $tweet->{text};
 	my $fav_id = $tweet->{id};
 
