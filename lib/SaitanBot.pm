@@ -185,6 +185,7 @@ sub fav {
 	my $fav_id = $tweet->{id};
 
 	my $conf = $self->{conf};
+	return if ( $tweet->{retweeted_status} );
 
 	foreach my $keyword ( @{ $conf->{fav}->{keywords} } ) {
 		if ( $text =~ decode_utf8($keyword) ) {
