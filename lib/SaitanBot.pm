@@ -115,9 +115,19 @@ sub react {
 sub add_data {
 	my ($self, $tweet) = @_;
 
-	return unless (defined($tweet->{id}) or $tweet->{user}{id} != $self->{whoami});
-	my $text = decode_utf8($tweet->{text});
-	&SaitanBot::Data::add_data($text);
+	return if (!($tweet->{id}) or $tweet->{user}{id} == $self->{whoami}->{id});
+
+	my $text = $tweet->{text};
+	$text = $tweet->{retweeted_status}->{text} if ($tweet->{retweeted_status});
+
+	if ($tweet->{entities}->{urls}->[0]) {
+		warn "DEBUG: URL detected\n";
+		my @urls;
+		push (@urls, $_->{url}) foreach @{$tweet->{entities}->{urls}};
+		$text =~ s/$_//g foreach @urls;
+	}
+
+	&SaitanBot::Data::add_data( decode_utf8($text) );
 }
 
 sub _prepare_reply {

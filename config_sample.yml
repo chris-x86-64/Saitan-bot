@@ -14,11 +14,11 @@ sql:
 interval: 3600
 
 categories:
-  - 'fav'
   - 'saitan'
   - 'tasty'
   - 'yuck'
   - 'couple'
+  - 'chou'
 
 replyonly:
   - 'mjkt'
@@ -110,6 +110,13 @@ yuck:
     - 'やめて＞＜'
     - 'にがいよぅ……＞＜'
 
+christmas:
+  keywords:
+    - 'さんたん'
+  replies:
+    - 'Hohoho!'
+    - 'メリークルシミマス！'
+
 prpr:
   keywords:
     - 'prpr'
@@ -150,15 +157,17 @@ couple:
     - 'hakosatsu'
     - 'さいりつ'
     - 'とねぴて'
-#    - 'でろがしわ'
-#    - 'つるでろ'
-#    - 'あげせん'
     - 'ひたあん'
     - 'まりせく'
   replies:
     - '(*´ω`*)'
-#    - '結婚はよ'
     - 'によによ'
     - 'にやにや'
-...
 
+chou:
+  keywords:
+    - '超'
+  replies:
+    - '超！！ｴｷｻｲﾀﾝ！！！！！'
+
+...

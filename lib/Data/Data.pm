@@ -49,57 +49,62 @@ sub add_data {
 
 sub markov {
 	use MeCab;
-	use Algorithm::MarkovChain;
 
 	my $dbh = connectSQL();
-	my $text = join(
-			"。",
-			@{
-					$dbh->selectcol_arrayref(
-'SELECT text FROM texts WHERE id >= (SELECT MAX(id) FROM texts) - 20'
-					)
-			  }
-	);
+	my $source = $dbh->selectcol_arrayref('SELECT text FROM texts WHERE id >= (SELECT MAX(id) FROM texts) - 20');
 	disconnectSQL($dbh);
 
+	my $text = join("。", @$source);
 	$text = decode_utf8($text);
-	$text =~ s/(\@|\/|\:|[0-9A-Za-z_]|\#|)//g;
+	$text =~ s/@[a-zA-Z0-9_]*//g;
+	$text =~ s/(QT|RT)//g;
+
+	my @nouns;
+	my @verbs;
 
 	my $mecab  = MeCab::Tagger->new;
-	my $chunks = [];
 
-	for (
-			my $node = $mecab->parseToNode($text) ;
-			$node ;
-			$node = $node->{next}
-	  )
-	{
-			next unless defined $node->{surface};
-			push @$chunks, $node->{surface};
+	for (my $node = $mecab->parseToNode($text); $node; $node = $node->{next}) {
+		next unless defined $node->{surface};
+
+		my $surface = $node->{surface};
+		my $type = decode_utf8((split(",", $node->{feature}))[0]);
+
+		if ($type eq '名詞') {
+			push (@nouns, $surface);
+		} elsif ($type eq '動詞') {
+			push (@verbs, $surface);
+		}
+		next;
 	}
-	warn join(",", @$chunks),"\n";
+	undef $text;
 
-	my $chain = Algorithm::MarkovChain->new;
-	$chain->seed(
-		symbols => $chunks,
-		longest => 8,
-	);
+	my $struct = decode_utf8($source->[rand(@$source)]);
+	my @final;
 
-	my @scrambled = $chain->spew( 
-			length => int(rand(8)),
-			strict_start => 1,
-	);
+	for (my $node = $mecab->parseToNode($struct); $node; $node = $node->{next}) {
+		next unless defined $node->{surface};
 
-	my $scrambled = '';
-	foreach my $chunk (@scrambled) {
-		$scrambled .= decode_utf8($chunk);
+		my $surface = $node->{surface};
+		my $type = decode_utf8((split(",", $node->{feature}))[0]);
+
+		if ($type eq '名詞') {
+			push (@final, $nouns[rand(@nouns)]);
+		} elsif ($type eq '動詞') {
+			push (@final, $verbs[rand(@verbs)]);
+		} else {
+			push (@final, $surface);
+		}
+
+		next;
 	}
 
-	return $scrambled;
+	return decode_utf8(join("", @final));
 }
 
 sub disconnectSQL {
 	my $dbh = shift;
 	$dbh->disconnect;
 }
+
 1;
