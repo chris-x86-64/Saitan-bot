@@ -101,13 +101,16 @@ sub react {
 	
 	my $id           = $tweet->{id};
 	my $text         = decode_utf8( $tweet->{text} );
-	my $is_mentioned = $self->_is_mentioned( $tweet, $source_user );
-	my $category     = $self->_check_category( $text, $is_mentioned );
 
-	if ( $category eq 'fav' ) {
-		$self->_fav($id);
-	}
-	else {
+	if (&SaitanBot::Data::souiu($text)) {
+		my $match = &SaitanBot::Data::souiu($text);
+		my $status = "ああ".$match."ってそういう...";
+		$self->_talk(decode_utf8($status), undef);
+		return;
+	} else {
+		my $is_mentioned = $self->_is_mentioned( $tweet, $source_user );
+		my $category     = $self->_check_category( $text, $is_mentioned );
+
 		$self->_prepare_reply( $source_user, $id, $category, $is_mentioned );
 	}
 }
@@ -139,7 +142,7 @@ sub _prepare_reply {
 		return;
 	}
 	elsif ( $category eq 'unknown' and $is_mentioned == 1 ) {
-		$status .= SaitanBot::Data->markov;
+		$status .= SaitanBot::Data->random;
 	}
 	else {
 		my $replies = $self->{conf}->{$category}->{replies};
@@ -221,6 +224,7 @@ sub fav {
 				}
 			}
 			else {
+				&SaitanBot::Data::register_faved($text);
 				$self->{favlimit} = 0;
 				print "Favorited: $fav_id\n";
 				last;
@@ -269,7 +273,7 @@ sub talk_randomly {
 	$timed = AE::timer(
 		$wait, 0,
 		sub {
-			$self->_talk( SaitanBot::Data->markov, undef );
+			$self->_talk( SaitanBot::Data->random, undef );
 			undef $timed;
 			$cv->send;
 		},

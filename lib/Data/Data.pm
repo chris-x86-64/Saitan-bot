@@ -2,11 +2,11 @@ package SaitanBot::Data;
 
 use strict;
 use warnings;
-use Encode;
 use YAML::Syck;
 use DBI;
+use MeCab;
+use Encode;
 use utf8;
-use Data::Dumper;
 
 
 my $conf = YAML::Syck::LoadFile('config.yml');
@@ -47,8 +47,7 @@ sub add_data {
 
 }
 
-sub markov {
-	use MeCab;
+sub random {
 
 	my $dbh = connectSQL();
 	my $source = $dbh->selectcol_arrayref('SELECT text FROM texts WHERE id >= (SELECT MAX(id) FROM texts) - 20');
@@ -100,6 +99,41 @@ sub markov {
 	}
 
 	return decode_utf8(join("", @final));
+}
+
+sub souiu {
+	my $text = shift;
+	my $dbh = connectSQL();
+	my $words = $dbh->selectcol_arrayref('SELECT word FROM souiu');
+	disconnectSQL($dbh);
+
+	foreach (@$words) {
+		my $word = decode_utf8($_);
+		if ($text =~ /\Q$word\E/) {
+			return $word;
+		}
+	}
+	return undef;
+}
+
+sub register_faved {
+	my $text = shift;
+	my $mecab  = MeCab::Tagger->new;
+	my @words;
+
+	for (my $node = $mecab->parseToNode($text); $node; $node = $node->{next}) {
+		next unless defined $node->{surface};
+
+		my $surface = $node->{surface};
+		my $type = decode_utf8((split(",", $node->{feature}))[0]);
+
+		push (@words, $surface) if ($type eq '名詞' or $type eq '動詞');
+	}
+
+	my $dbh = connectSQL();
+	$dbh->do("INSERT INTO fav(word) VALUE (?) ON DUPLICATE KEY UPDATE count=count+1", undef, $_) foreach (@words);
+	disconnectSQL($dbh);
+	return;
 }
 
 sub disconnectSQL {
