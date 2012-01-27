@@ -34,7 +34,7 @@ sub add_data {
 	foreach my $pattern ( @{ $conf->{souiu}->{patterns} } ) {
 		if ( $text =~ decode_utf8($pattern) ) {
 			$dbh->do( "INSERT INTO souiu(word) VALUES(?)",
-				undef, $1 );
+				undef, $1 ) or die DBI->errstr;
 		}
 	}
 
@@ -104,7 +104,7 @@ sub random {
 sub souiu {
 	my $text = shift;
 	my $dbh = connectSQL();
-	my $words = $dbh->selectcol_arrayref('SELECT word FROM souiu');
+	my $words = $dbh->selectcol_arrayref('SELECT word FROM souiu') or die DBI->errstr;
 	disconnectSQL($dbh);
 
 	foreach (@$words) {
@@ -131,7 +131,9 @@ sub register_faved {
 	}
 
 	my $dbh = connectSQL();
-	$dbh->do("INSERT INTO fav(word) VALUE (?) ON DUPLICATE KEY UPDATE count=count+1", undef, $_) foreach (@words);
+	foreach (@words) {
+		$dbh->do("INSERT INTO fav(word) VALUE (?) ON DUPLICATE KEY UPDATE count=count+1", undef, $_) or die DBI->errstr;
+	}
 	disconnectSQL($dbh);
 	return;
 }

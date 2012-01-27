@@ -38,13 +38,15 @@ sub new {
 
 	# Gets user data
 	$self->{whoami} = $self->{actions}->verify_credentials;
+	$self->{id} = $self->{whoami}->{id};
 
 	return $self;
 }
 
-sub whoami {
-	my $self = shift;
-	return $self->{whoami}->{id};
+sub is_myself {
+	my ($self, $source) = @_;
+	return 1 if ($source == $self->{id});
+	return 0;
 }
 
 # Gives OAuth keys to AnyEvent::Twitter::Stream
@@ -79,30 +81,21 @@ sub shutdown {
 
 # Detects follow then automatically refollow
 sub refollow {
-	my ($self, $event) = @_;
-
-	# Ignore your own actions
-	return unless ( $event->{source}->{id} != $self->{whoami}->{id} );
+	my ($self, $source) = @_;
 
 # Follow the account which has just followed you
-	if ( $event->{event} eq 'follow' )
-	{
-		$self->{actions}->create_friend( {
-			user_id => $event->{source}->{id}
-		} );
+	$self->{actions}->create_friend( {
+			user_id => $source
+		}
+	);
 
-		print "Refollowed $event->{source}->{id}\n";
-	}
+	print "Refollowed $source\n";
 }
 
 sub react {
 	my ($self, $tweet) = @_;
 	
-	return unless ( defined $tweet->{id} );
-	return if ( $tweet->{retweeted_status} );
-
 	my $source_user = $tweet->{user}{screen_name};
-	return unless ( $source_user ne $self->{whoami}->{screen_name} );
 	
 	my $id           = $tweet->{id};
 	my $text         = decode_utf8( $tweet->{text} );
@@ -122,8 +115,6 @@ sub react {
 
 sub add_data {
 	my ($self, $tweet) = @_;
-
-	return if (!($tweet->{id}) or $tweet->{user}{id} == $self->{whoami}->{id});
 
 	my $text = $tweet->{text};
 	$text = $tweet->{retweeted_status}->{text} if ($tweet->{retweeted_status});
@@ -201,12 +192,10 @@ sub _is_mentioned {
 sub fav {
 	my ($self, $tweet) = @_;
 
-	return unless ($tweet->{id});
 	my $text = $tweet->{text};
 	my $fav_id = $tweet->{id};
 
 	my $conf = $self->{conf};
-	return if ( $tweet->{retweeted_status} );
 
 	foreach my $keyword ( @{ $conf->{fav}->{keywords} } ) {
 		if ( $text =~ decode_utf8($keyword) ) {

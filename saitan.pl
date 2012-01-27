@@ -14,7 +14,6 @@ binmode STDOUT, ":utf8";          # All output will be UTF-8
 my $done = AE::cv;                # Handles event condition
 
 my $saitan = SaitanBot->new();
-my $whoami = $saitan->whoami;
 
 my $stream = AnyEvent::Twitter::Stream->new(
     $saitan->oauth_keys_stream,
@@ -27,16 +26,20 @@ my $stream = AnyEvent::Twitter::Stream->new(
         my $tweet = shift;
         return if (!$tweet->{id});
 
-        if ($tweet->{user}{id} != $whoami and $tweet->{source} !~ /twittbot\.net/) { # ToDo: Configurable ignore settings
-			my $text  = decode_utf8( $tweet->{text} );
-			$saitan->react($tweet);
-			$saitan->fav($tweet);
+        if ($saitan->is_myself($tweet->{user}{id}) == 0 and $tweet->{source} !~ /twittbot\.net/) { # ToDo: Configurable ignore settings
+			unless ($tweet->{retweeted_status}) {
+				$saitan->react($tweet);
+				$saitan->fav($tweet);
+			}
 			$saitan->add_data($tweet);
 		}
     },
     on_event => sub {
         my $event = shift;
-        $saitan->refollow($event);
+        return if (!$event->{source}->{id});
+
+        my $source = $event->{source}->{id};
+        $saitan->refollow($source) if ($saitan->is_myself($source) == 0 and $event->{event} eq 'follow');
     },
     on_error => sub {
         my $error = shift;
