@@ -42,6 +42,11 @@ sub new {
 	return $self;
 }
 
+sub whoami {
+	my $self = shift;
+	return $self->{whoami}->{id};
+}
+
 # Gives OAuth keys to AnyEvent::Twitter::Stream
 sub oauth_keys_stream {
 	my $self = shift;
