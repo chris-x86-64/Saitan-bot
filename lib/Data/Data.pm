@@ -33,8 +33,10 @@ sub add_data {
 
 	foreach my $pattern ( @{ $conf->{souiu}->{patterns} } ) {
 		if ( $text =~ decode_utf8($pattern) ) {
+			$_ = $1;
+			s/、//g;
 			$dbh->do( "INSERT INTO souiu(word) VALUES(?)",
-				undef, $1 ) or die DBI->errstr;
+				undef, $_ ) or die DBI->errstr;
 		}
 	}
 
