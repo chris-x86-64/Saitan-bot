@@ -100,7 +100,7 @@ sub react {
 	my $id           = $tweet->{id};
 	my $text         = decode_utf8( $tweet->{text} );
 
-	if (&SaitanBot::Data::souiu($text) and rand < 0.2) {
+	if (&SaitanBot::Data::souiu($text) and rand < $self->{conf}->{souiu}->{prob}) {
 		my $match = &SaitanBot::Data::souiu($text);
 		my $status = "ああ".$match."ってそういう...";
 		$self->_talk(decode_utf8($status), undef);

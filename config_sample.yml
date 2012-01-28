@@ -32,6 +32,7 @@ replyonly:
 souiu:
   patterns:
     - 'ああ(.+?)ってそういう'
+  prob: 0.2
 
 fav:
   keywords:
