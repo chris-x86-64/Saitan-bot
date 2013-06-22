@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Encode;
 use utf8;
-use Net::Twitter::Lite;
+use Net::Twitter::Lite::WithAPIv1_1;
 use YAML::Syck;
 use AnyEvent;
 require 'Data/Data.pm';
@@ -21,7 +21,7 @@ sub new {
 		conf    => $conf,
 		
 		# Initiate Twitter-API methods
-		actions => Net::Twitter::Lite->new(
+		actions => Net::Twitter::Lite::WithAPIv1_1->new(
 			consumer_key        => $conf->{oauth}->{consumer_key},
 			consumer_secret     => $conf->{oauth}->{consumer_secret},
 			access_token        => $conf->{oauth}->{access_token},
