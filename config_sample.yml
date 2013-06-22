@@ -17,7 +17,7 @@ categories:
   - 'saitan'
   - 'tasty'
   - 'yuck'
-  - 'couple'
+#  - 'couple'
   - 'chou'
 
 replyonly:
@@ -111,13 +111,6 @@ yuck:
     - 'やめて＞＜'
     - 'にがいよぅ……＞＜'
 
-christmas:
-  keywords:
-    - 'さんたん'
-  replies:
-    - 'Hohoho!'
-    - 'メリークルシミマス！'
-
 prpr:
   keywords:
     - 'prpr'
@@ -139,10 +132,6 @@ momi:
   replies:
     - 'ふざけんな'
     - '無いよ？'
-    - 'これで我慢して っ猫'
-    - 'これで我慢して っうさぎ'
-    - 'これで我慢して っ布団'
-    - 'これで我慢して っクッション'
 
 oppai:
   keywords:
@@ -154,12 +143,6 @@ oppai:
 
 couple:
   keywords:
-    - 'はこさつ'
-    - 'hakosatsu'
-    - 'さいりつ'
-    - 'とねぴて'
-    - 'ひたあん'
-    - 'まりせく'
   replies:
     - '(*´ω`*)'
     - 'によによ'
