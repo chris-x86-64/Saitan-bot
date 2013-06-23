@@ -4,42 +4,29 @@ use strict;
 use warnings;
 use Encode;
 use utf8;
-use AnyEvent::Twitter::Stream;    # Handles Userstream API
+use AnyEvent::Twitter::Stream;
 use lib './lib';
-require 'SaitanBot.pm';
-binmode STDOUT, ":utf8";          # All output will be UTF-8
+use SaitanBot;
+binmode STDOUT, ":utf8";
 
-# my $connected = 0;
-# Initiate Userstream
-my $done = AE::cv;                # Handles event condition
+my $done = AE::cv;
 
-my $saitan = SaitanBot->new();
+my $saitan = SaitanBot->new;
 
 my $stream = AnyEvent::Twitter::Stream->new(
     $saitan->oauth_keys_stream,
     ANYEVENT_TWITTER_STREAM_SSL => 1,
     method                      => "userstream",
     on_connect                  => sub {
-        $saitan->wakeup;
+#        $saitan->wakeup;
     },
     on_tweet => sub {
         my $tweet = shift;
-        return if (!$tweet->{id});
-
-        if ($saitan->is_myself($tweet->{user}{id}) == 0 and $tweet->{source} !~ /twittbot\.net/) { # ToDo: Configurable ignore settings
-			unless ($tweet->{retweeted_status}) {
-				$saitan->react($tweet);
-				$saitan->fav($tweet);
-			}
-			$saitan->add_data($tweet);
-		}
+    	$saitan->react($tweet) unless (!$tweet->{id});
     },
     on_event => sub {
         my $event = shift;
-        return if (!$event->{source}->{id});
-
-        my $source = $event->{source}->{id};
-        $saitan->refollow($source) if ($saitan->is_myself($source) == 0 and $event->{event} eq 'follow');
+    	$saitan->refollow($event->{source}->{userid};
     },
     on_error => sub {
         my $error = shift;
@@ -51,6 +38,6 @@ my $stream = AnyEvent::Twitter::Stream->new(
     },
 );
 
-$saitan->talk_randomly;
+$saitan->talk;
 
 $done->recv;
