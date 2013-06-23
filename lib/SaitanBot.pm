@@ -7,7 +7,8 @@ use utf8;
 use Net::Twitter::Lite::WithAPIv1_1;
 use YAML::Syck;
 use AnyEvent;
-require 'Data/Data.pm';
+use lib './lib';
+use SaitanBot::Data;
 
 # Read OAuth keys from the (UTF-8) config file
 local $YAML::Syck::ImplicitUnicode = 1;
@@ -29,11 +30,6 @@ sub new {
 			ssl                 => 1,
 			traits              => [qw/API::REST OAuth WrapError/],
 		),
-
-		# Boolean - Whether hitted the daily update limit or not
-		limit    => 0,
-		favlimit => 0,
-
 	}, $class;
 
 	# Gets user data
@@ -46,7 +42,7 @@ sub new {
 sub is_myself {
 	my ($self, $source) = @_;
 	return 1 if ($source == $self->{id});
-	return 0;
+	return undef;
 }
 
 # Gives OAuth keys to AnyEvent::Twitter::Stream
@@ -67,8 +63,7 @@ sub oauth_keys_stream {
 sub wakeup {
 	my $self = shift;
 
-	my $status = decode_utf8(
-		"こんにちは！さいたんbotがログインしたよ！");
+	my $status = decode_utf8($self->{conf}->{wakeup});
 	$self->_talk( $status, undef );
 }
 
