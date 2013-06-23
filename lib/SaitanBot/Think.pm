@@ -51,6 +51,20 @@ sub generate_tweet {
 	return $self->_randomize($self->_tagger($data));
 }
 
+sub get_souiu {
+	my ($self, $text) = @_;
+	my $dbh = $self->{dbh};
+	my $keywords = $dbh->select('souiu', 'word')->array;
+
+	foreach (@$keywords) {
+		my $word = decode_utf8($_);
+		if ($text =~ /\Q$word\E/) {
+			return $word;
+		}
+	}
+	return undef;
+}
+
 sub categorize {
 }
 
