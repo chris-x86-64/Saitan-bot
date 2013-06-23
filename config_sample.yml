@@ -6,18 +6,29 @@ oauth:
   consumer_key: ' '
   consumer_secret: ' '
 
-sql:
-  dbname: ' '
-  username: ' '
-  password: ' '
+sqlite:
+  dbpath: '/home/username/Saitan-bot/saitan.db'
 
 interval: 3600
+
+retweeted: 0
+
+ignorelist:
+  apps:
+    - "twittbot.net"
+  accounts:
+  keywords:
+    - "@"
+    - "RT"
+    - "QT"
+
+wakeup: "こんにちは！さいたんbotがログインしたよ！"
+shutdown: "ばいばーい！"
 
 categories:
   - 'saitan'
   - 'tasty'
   - 'yuck'
-#  - 'couple'
   - 'chou'
 
 replyonly:
