@@ -5,8 +5,6 @@ use warnings;
 use Encode;
 use utf8;
 use Exporter;
-use DBIx::Simple;
-use SQL::Abstract::Limit;
 use MeCab;
 use Algorithm::MarkovChain;
 
@@ -18,21 +16,15 @@ my @EXPORT = ();
 sub new {
 	my ($class, $opt) = @_;
 	my $self = bless {
-		dbh => DBIx::Simple->connect('dbi:SQLite:dbname=' . $opt->{dbname}),
+		dbwrapper => SaitanBot::Database->new($conf->{sqlite});
 		markov => Algorithm::MarkovChain->new,
 	}, $class;
-	$self->{dbh}->abstract = SQL::Abstract->new;
-	$self->{dbh}->{sqlite_unicode} = 1;
 	return $self;
 }
 
-sub store_tweet {
+
+sub store_souiu {
 	my ($self, $text) = @_;
-	return unless ($text);
-
-	my $dbh = $self->{dbh};
-	$dbh->insert('tweets', { text => $text });
-
 	my $souiu_patterns = $conf->{souiu}->{patterns};
 	foreach my $pattern (@{ $souiu_patterns }) {
 		if ($text =~ decode_utf8($pattern)) {
@@ -45,16 +37,13 @@ sub store_tweet {
 
 sub generate_tweet {
 	my $self = shift;
-	my $dbh = $self->{dbh};
-	$dbh->abstract = SQL::Abstract::Limit->new(limit_dialect => $dbh->{dbh});
-	my $data = $dbh->select('tweets', ['text'], undef, ['id'], 20, 0)->arrays;
-	return $self->_randomize($self->_tagger($data));
+	my $dbh = $self->{dbwrapper};
+	return $self->_randomize($self->_tagger($dbh->get_tweets_from_db));
 }
 
-sub get_souiu {
+sub is_souiu {
 	my ($self, $text) = @_;
-	my $dbh = $self->{dbh};
-	my $keywords = $dbh->select('souiu', 'word')->array;
+	my $keywords = $self->{dbwrapper}->get_souiu;
 
 	foreach (@$keywords) {
 		my $word = decode_utf8($_);
