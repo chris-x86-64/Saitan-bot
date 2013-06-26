@@ -1,4 +1,4 @@
-package SaitanBot;
+package SaitanBot::Talk;
 
 use strict;
 use warnings;
