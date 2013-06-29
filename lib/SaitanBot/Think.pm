@@ -2,6 +2,7 @@ package SaitanBot::Think;
 
 use strict;
 use warnings;
+use POSIX;
 use Encode;
 use Data::Dumper;
 use utf8;
@@ -34,7 +35,7 @@ sub store_souiu {
 		if ($text =~ decode_utf8($pattern)) {
 			$_ = $1;
 			s/、//g;
-			$dbh->insert('souiu', { word => $_ }) if ($dbh->select('souiu', 'word', { word => $_ })->rows == 0);
+			$dbh->store_tweet_to_db({ text => $_ }, { table => 'souiu', column => 'word' }) if ($dbh->select('souiu', 'word', { word => $_ })->rows == 0);
 		}
 	}
 }
@@ -78,7 +79,7 @@ sub _tagger {
 sub _randomize {
 	my ($self, $data) = @_;
 	my $chain = $self->{markov};
-	my $param = rand(20);
+	my $param = rand(ceil($self->{conf}->{maxlength}));
 	$chain->seed(symbols => $data, longest => $param);
 
 	return join("", $chain->spew(
