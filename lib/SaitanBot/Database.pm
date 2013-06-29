@@ -26,17 +26,17 @@ sub store_tweet_to_db {
 	my ($self, $tweet, $dbargs) = @_;
 	return unless ($tweet->{text});
 
-	my ($text, $urls) = ('', []);
+	my $text = '';
 	if ($tweet->{retweeted_status}) {
 		$text = $tweet->{retweeted_status}->{text};
-		$urls = $tweet->{retweeted_status}->{entities}->{urls};
 	} else {
 		$text = $tweet->{text};
-		$urls = $tweet->{entities}->{urls};
 	}
 
 	$text = decode_utf8($text);
 
+	my $urls = $tweet->{entities}->{urls};
+	$urls = [@$urls, @{$tweet->{entities}->{media}}] if ($tweet->{entities}->{media});
 	$text =~ s/$_->{url}//g foreach (@$urls);
 
 	my $dbh = $self->{dbh};
