@@ -18,15 +18,25 @@ sub new {
 	}, $class;
 	$self->{dbh}->abstract = SQL::Abstract->new;
 	$self->{dbh}->{sqlite_unicode} = 1;
+
 	return $self;
 }
 
 sub store_tweet_to_db {
-	my ($self, $args) = @_;
-	return unless ($args->{text});
+	my ($self, $tweet, $dbargs) = @_;
+	return unless ($tweet->{text});
+
+	my $text = $tweet->{retweeted_status} ? $tweet->{retweeted_status}->{text} : $tweet->{text};
+	$text = decode_utf8($text);
+
+	$text =~ s/$_->{url}//g foreach (@{$tweet->{entities}->{urls}});
 
 	my $dbh = $self->{dbh};
-	$dbh->insert($args->{table}, { $args->{column} => $args->{text} });
+	$dbh->insert($dbargs->{table},
+		{
+			$dbargs->{column} => $text
+		}
+	);
 }
 
 sub get_tweets_from_db {
