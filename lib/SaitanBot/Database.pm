@@ -48,7 +48,7 @@ sub get_tweets_from_db {
 }
 
 sub get_souiu {
-	my ($self, $text) = @_;
+	my $self = shift;
 	my $dbh = $self->{dbh};
 	return $dbh->select('souiu', 'word')->array;
 }

@@ -35,7 +35,7 @@ sub store_souiu {
 		if ($text =~ decode_utf8($pattern)) {
 			$_ = $1;
 			s/、//g;
-			$dbh->store_tweet_to_db({ text => $_ }, { table => 'souiu', column => 'word' }) if ($dbh->select('souiu', 'word', { word => $_ })->rows == 0);
+			$dbh->store_tweet_to_db({ text => $_ }, { table => 'souiu', column => 'word' }) unless ($dbh->get_souiu);
 		}
 	}
 }
